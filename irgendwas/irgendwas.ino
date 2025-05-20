@@ -8,22 +8,22 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ800);
 #define GREEN pixels.Color(52, 173, 0)
 
 void setup() {
-  pixels.begin();
+	pixels.begin();
 }
 
 void loop() {
-  fill_delay(GREY, 75);
-  delay(DELAYVAL);
-  fill_delay(RED, 75);
-  delay(DELAYVAL);
-  fill_delay(GREEN, 75);
-  delay(DELAYVAL);
+	fill_delay(GREY, 75);
+	delay(DELAYVAL);
+	fill_delay(RED, 75);
+	delay(DELAYVAL);
+	fill_delay(GREEN, 75);
+	delay(DELAYVAL);
 }
 
 void fill_delay(uint32_t color, int dl) {
-  for (int i = 0; i < NUMPIXELS; i++) {
-    pixels.setPixelColor(i, color);
-    pixels.show();
-    delay(dl);
-  }
+	for (int i = 0; i < NUMPIXELS; i++) {
+		pixels.setPixelColor(i, color);
+		pixels.show();
+		delay(dl);
+	}
 }

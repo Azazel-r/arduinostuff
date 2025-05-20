@@ -8,33 +8,33 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ800);
 
 
 void setup() {
-  pixels.begin();
-  pixels.show();
-}
+	pixels.begin();
+	pixels.show();
+	}
 
-void loop() {
-  hin();
-  her();
+	void loop() {
+	hin();
+	her();
 }
 
 void hin() {
-  for (int i = 0; i < NUMPIXELS-WIDTH; i++) {
-    pixels.clear();
-    for (int j = i; j < (i+WIDTH); j++) {
-      pixels.setPixelColor(j, FARBE);
-    }
-    pixels.show();
-    delay(DELAYVAL);
-  }
+	for (int i = 0; i < NUMPIXELS-WIDTH; i++) {
+		pixels.clear();
+		for (int j = i; j < (i+WIDTH); j++) {
+		pixels.setPixelColor(j, FARBE);
+		}
+		pixels.show();
+		delay(DELAYVAL);
+	}
 }
 
 void her() {
-  for (int i = NUMPIXELS-1; i > WIDTH-1; i--) {
-    pixels.clear();
-    for (int j = i; j > (i-WIDTH); j--) {
-      pixels.setPixelColor(j, FARBE);
-    }
-    pixels.show();
-    delay(DELAYVAL);
-  }
+	for (int i = NUMPIXELS-1; i > WIDTH-1; i--) {
+		pixels.clear();
+		for (int j = i; j > (i-WIDTH); j--) {
+		pixels.setPixelColor(j, FARBE);
+		}
+		pixels.show();
+		delay(DELAYVAL);
+	}
 }
