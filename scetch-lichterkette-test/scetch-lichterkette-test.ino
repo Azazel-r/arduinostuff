@@ -1,8 +1,7 @@
 #include <Adafruit_NeoPixel.h>
-#define PIN 6
+#define PIN 20
 #define NUMPIXELS 50
 #define DELAYVAL 25
-NEW SKETCH
 
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ800);
 #define LOVE1 pixels.Color(127, 40, 107)
