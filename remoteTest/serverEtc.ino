@@ -6,8 +6,8 @@
 */
 
 // Replace with your network credentials
-const char* ssid = "FRITZ!Box 6660 Cable PD";
-const char* password = "32157818529049484647";
+const char* ssid = "Azalea's Garden"; // "FRITZ!Box 6660 Cable PD"; // 
+const char* password = "12345678"; // "Pommes1+"; // "32157818529049484647"; // 
 
 // Function to handle setting the brightness
 void handleSet() {
@@ -15,6 +15,24 @@ void handleSet() {
     brightness = server.arg("value").toInt();
     Serial.print("Got a value: ");
     Serial.println(brightness);
+  }
+  handleRoot();
+}
+
+void handleHue() {
+  if (server.hasArg("value")) {
+    activeColValue = server.arg("value").toInt();
+    Serial.print("Got a HUE Value: ");
+    Serial.println(activeColValue);
+  }
+  handleRoot();
+}
+
+void handleColor() {
+  if (server.hasArg("c")) {
+    activeFunction = server.arg("c").toInt();
+    Serial.print("Got a color: ");
+    Serial.println(activeFunction);
   }
   handleRoot();
 }
@@ -31,14 +49,23 @@ void handleRoot() {
   html += ".slider { -webkit-appearance: none; width: 100%; height: 15px; border-radius: 5px; background: #d3d3d3; outline: none; opacity: 0.7; -webkit-transition: .2s; transition: opacity .2s; }";
   html += ".slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 25px; height: 25px; border-radius: 50%;  background: #04AA6D; cursor: pointer; }";
   html += ".slider::-moz-range-thumb { width: 25px; height: 25px; border-radius: 50%; background: #04AA6D; cursor: pointer; }";
+  html += ".rb { background-color: #FF0000; } .yb { background-color: #FFFF00; } .gb {background-color: #00FF00; } .wb { background-color: #FFFFFF; }";
   html += ".myButton { width: 100px; height: 50px; } </style>";
   html += "</head><body>";
 
   // body with headline and slider and button
-  html += "<h1><p>This slider does something</p></h1>";
+  html += "<h1><p>Slider = Brightness</p></h1>";
   html += "<div class=\"slidecontainer\"><input type=\"range\" min=\"0\" max=\"255\" value=\"127\" class=\"slider\" id=\"myRange\"></div>";
-  html += "<button onclick=\"goToPage()\" class=\"myButton\">Go!</button>";
+  html += "<button onclick=\"goToPage()\" class=\"myButton\">Brightness</button>";
   html += "<script> const slider = document.getElementById(\"myRange\"); function goToPage() { const value = slider.value; window.location.href = `/set?value=${value}`; }</script>";
+  html += "<button onclick=\"rainbow()\" class=\"myButton wb\">Rainbow!</button>";
+  html += "<button onclick=\"solidGreen()\" class=\"myButton gb\">Green</button>";
+  html += "<button onclick=\"solidYellow()\" class=\"myButton yb\">Yellow</button>";
+  html += "<button onclick=\"solidRed()\" class=\"myButton rb\">Red</button>";
+  html += "<script> function rainbow() { window.location.href = \"/color?c=0\"; }</script>"; // rainbw
+  html += "<script> function solidGreen() { window.location.href = \"/color?c=1\"; }</script>"; // G
+  html += "<script> function solidYellow() { window.location.href = \"/color?c=2\"; }</script>"; // Y
+  html += "<script> function solidRed() { window.location.href = \"/color?c=3\"; }</script>"; // R
   html += "</body></html>";
 
   server.send(200, "text/html", html);
@@ -61,6 +88,8 @@ void setupServer() {
   // Set up the web server to handle different routes
   server.on("/", handleRoot);
   server.on("/set", handleSet);
+  server.on("/color", handleColor);
+  server.on("/setHue", handleHue);
 
   // Start the web server
   server.begin();
