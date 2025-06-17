@@ -6,8 +6,8 @@
 */
 
 // Replace with your network credentials
-const char* ssid = "Azalea's Garden"; // "FRITZ!Box 6660 Cable PD"; // 
-const char* password = "12345678"; // "Pommes1+"; // "32157818529049484647"; // 
+const char* ssid = "Lars stinkt <3"; // "Azalea's Garden"; // "FRITZ!Box 6660 Cable PD"; // 
+const char* password = "fabi1234"; // "12345678"; // "Pommes1+"; // "32157818529049484647"; // 
 
 // Function to handle setting the brightness
 void handleSet() {
@@ -37,6 +37,14 @@ void handleColor() {
   handleRoot();
 }
 
+void handleStartup() {
+  startFramesForAnim = frameCount;
+  activeFunction = -3;
+  Serial.print("Starting Animation at frame: ");
+  Serial.println(frameCount);
+  handleRoot();
+}
+
 // Function to handle the root URL and show the current states
 void handleRoot() {
 
@@ -62,10 +70,12 @@ void handleRoot() {
   html += "<button onclick=\"solidGreen()\" class=\"myButton gb\">Green</button>";
   html += "<button onclick=\"solidYellow()\" class=\"myButton yb\">Yellow</button>";
   html += "<button onclick=\"solidRed()\" class=\"myButton rb\">Red</button>";
+  html += "<button onclick=\"startup()\" class=\"myButton wb\">Startup</button>";
   html += "<script> function rainbow() { window.location.href = \"/color?c=0\"; }</script>"; // rainbw
   html += "<script> function solidGreen() { window.location.href = \"/color?c=1\"; }</script>"; // G
   html += "<script> function solidYellow() { window.location.href = \"/color?c=2\"; }</script>"; // Y
   html += "<script> function solidRed() { window.location.href = \"/color?c=3\"; }</script>"; // R
+  html += "<script> function startup() { window.location.href = \"/startup\"; }</script>"; // startup
   html += "</body></html>";
 
   server.send(200, "text/html", html);
@@ -90,6 +100,7 @@ void setupServer() {
   server.on("/set", handleSet);
   server.on("/color", handleColor);
   server.on("/setHue", handleHue);
+  server.on("/startup", handleStartup);
 
   // Start the web server
   server.begin();
