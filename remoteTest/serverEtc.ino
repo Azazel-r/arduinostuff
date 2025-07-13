@@ -6,15 +6,25 @@
 */
 
 // Replace with your network credentials
-const char* ssid = "Lars stinkt <3"; // "Azalea's Garden"; // "FRITZ!Box 6660 Cable PD"; // 
-const char* password = "fabi1234"; // "12345678"; // "Pommes1+"; // "32157818529049484647"; // 
+const char* ssid = "Azalea's Garden"; // "Lars stinkt <3"; // "FRITZ!Box 6660 Cable PD"; // 
+const char* password = "12345678"; // "fabi1234"; // "Pommes1+"; // "32157818529049484647"; // 
 
 // Function to handle setting the brightness
 void handleSet() {
   if (server.hasArg("value")) {
-    brightness = server.arg("value").toInt();
+    brightness = (int) mapf(server.arg("value").toInt(), 0, 100, 0, 255);
     Serial.print("Got a value: ");
     Serial.println(brightness);
+  }
+  handleRoot();
+}
+
+void handleAngle() {
+  if (server.hasArg("value")) {
+    // activeAngle = (int) mapf(server.arg("value").toInt(), 0, 100, 0, 90);
+    activeAngle = server.arg("value") == "min" ? 0 : 140;
+    Serial.print("Got an angle: ");
+    Serial.println(activeAngle);
   }
   handleRoot();
 }
@@ -63,9 +73,14 @@ void handleRoot() {
 
   // body with headline and slider and button
   html += "<h1><p>Slider = Brightness</p></h1>";
-  html += "<div class=\"slidecontainer\"><input type=\"range\" min=\"0\" max=\"255\" value=\"127\" class=\"slider\" id=\"myRange\"></div>";
-  html += "<button onclick=\"goToPage()\" class=\"myButton\">Brightness</button>";
-  html += "<script> const slider = document.getElementById(\"myRange\"); function goToPage() { const value = slider.value; window.location.href = `/set?value=${value}`; }</script>";
+  html += "<div class=\"slidecontainer\"><input type=\"range\" min=\"0\" max=\"100\" value=\"50\" class=\"slider\" id=\"myRange\"></div>";
+  html += "<button onclick=\"brightness()\" class=\"myButton\">Brightness</button>";
+  html += "<script> const slider = document.getElementById(\"myRange\"); function brightness() { const value = slider.value; window.location.href = `/set?value=${value}`; }</script>";
+  html += "<button onclick=\"angleMin()\" class=\"myButton\">Servo Min</button>";
+  html += "<script> function angleMin() { window.location.href = \"/angle?value=min\"; }</script>";
+  html += "<button onclick=\"angleMax()\" class=\"myButton\">Servo Max</button>";
+  html += "<script> function angleMax() { window.location.href = \"/angle?value=max\"; }</script>";
+  // html += "<script> const slider2 = document.getElementById(\"myRange\"); function angle() { const value = slider.value; window.location.href = `/angle?value=${value}`; }</script>";
   html += "<button onclick=\"rainbow()\" class=\"myButton wb\">Rainbow!</button>";
   html += "<button onclick=\"solidGreen()\" class=\"myButton gb\">Green</button>";
   html += "<button onclick=\"solidYellow()\" class=\"myButton yb\">Yellow</button>";
@@ -101,6 +116,7 @@ void setupServer() {
   server.on("/color", handleColor);
   server.on("/setHue", handleHue);
   server.on("/startup", handleStartup);
+  server.on("/angle", handleAngle);
 
   // Start the web server
   server.begin();
