@@ -5,9 +5,9 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// Replace with your network credentials
-const char* ssid = "Azalea's Garden"; // "Lars stinkt <3"; // "FRITZ!Box 6660 Cable PD"; // 
-const char* password = "12345678"; // "fabi1234"; // "Pommes1+"; // "32157818529049484647"; // 
+// Replace with your network credentials (redacted for obvious reasons)
+const char* ssid = "";
+const char* password = "";
 
 // Function to handle setting the brightness
 void handleSet() {
@@ -19,6 +19,7 @@ void handleSet() {
   handleRoot();
 }
 
+// function to handle setting the servo motor angle
 void handleAngle() {
   if (server.hasArg("value")) {
     // activeAngle = (int) mapf(server.arg("value").toInt(), 0, 100, 0, 90);
@@ -29,6 +30,7 @@ void handleAngle() {
   handleRoot();
 }
 
+// function to handle setting the hue for the HSV color rainbow
 void handleHue() {
   if (server.hasArg("value")) {
     activeColValue = server.arg("value").toInt();
@@ -38,6 +40,7 @@ void handleHue() {
   handleRoot();
 }
 
+// function to set static colors
 void handleColor() {
   if (server.hasArg("c")) {
     activeFunction = server.arg("c").toInt();
@@ -47,6 +50,7 @@ void handleColor() {
   handleRoot();
 }
 
+// function to play the startup animation 
 void handleStartup() {
   startFramesForAnim = frameCount;
   activeFunction = -3;
@@ -57,6 +61,12 @@ void handleStartup() {
 
 // Function to handle the root URL and show the current states
 void handleRoot() {
+
+
+  // why do i have to code html in strings... why do i have to code html in strings... why do i hAVE TO CODE HTML IN STRINGS?? WHY DO I HAVE TO CODE HTML IN STRINGS..??? WHY DO I HAVE TO CODE HTML IN STRINGS ??????????????
+  
+  // anyway this shoots out a little html site that is basically a remote control for the arduino, with buttons to trigger certain functions.
+  // its just used for manual purposes because obviously in the actual app the http requests are made from the code and not from pressing a button on the html page
 
   // header with style
   String html = "<!DOCTYPE html><html lang=\"en\"><head>";

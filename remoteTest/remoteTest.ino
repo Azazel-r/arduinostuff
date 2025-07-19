@@ -1,17 +1,27 @@
 // -------------------------------------------------------------------------------------------------------------------------------------
+// i might mix up english and german in the comments. sorry about that
+// this is the arduino code for the Sir Flex-A-Lot Project
+// main things it's doing: control servo motor and make LEDs glow
+// not all the functions are used, or useful to begin with. this started as a test program and just transitioned into the real thing
+// all the code by: Renée Richter
 
+// you may have to download these libraries if you haven't already
 #include <ESP32Servo.h>
 #include <WiFi.h>
 #include <WebServer.h>
 #include <Adafruit_NeoPixel.h>
-#define PIN 20
+#define PIN 20 // for LEDS
 #define SERVOPIN 4
-#define NUMPIXELS 27
+#define NUMPIXELS 27 // how many LEDs you have on your strip
 
 // define pixels object whatever
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_RGB + NEO_KHZ800);
 Servo myservo;
 
+// Create a web server object
+WebServer server(80);
+
+// general constants and variables used throughout
 int frameCount = 1;
 int startFramesForAnim = 0;
 const int numFrames = 240;
@@ -26,10 +36,16 @@ int activeAngle = 0;   // angle to reach
 int currentAngle = 0;  // angle its currently at
 int rainbowarray[]       = { 0, 10922, 21845, 32768, 43690, 54613 };
 int rainbowarraysorted[] = { 21845, 10922, 0, 54613, 43690, 32768 };
-
-// Create a web server object
-WebServer server(80);
 int brightness = 200;
+
+
+
+
+
+
+/* --------------------------------------------------------------------------------
+                  ALL THE HELPER FUNCTIONS (FOR MATH ETC)
+-------------------------------------------------------------------------------- */
 
 uint32_t lerpColor(float p, uint32_t c1, uint32_t c2) {
   // extract color values (RGB) with shifting and mask it with 0xFF aka an unsigned 8bit integer
@@ -71,6 +87,15 @@ float period(float p) {
 float easeOut(float p) {
   return sin(0.5 * p * PI);
 }
+
+
+
+
+
+
+/* --------------------------------------------------------------------------------
+                      FUNCTIONS FOR LED COLORS AND ANIMATIONS
+-------------------------------------------------------------------------------- */
 
 void solidColor(int n) {
   if (n == 1) fill(pixels.Color(brightness, 0, 0));                         // G
@@ -151,30 +176,12 @@ void startupAnimation(int startframes, int count, int secs) {
     }
 
   }
-
   else {
     activeFunction = 4;
     startFramesForAnim = frameCount;
   }
 }
 
-void waveServo(int startframes, int count) {
-  count = count - startframes;
-  int secs = 3;
-  float t = mapf(count, 0, (secs * 60), 0, 1);
-  fill(WHITE);
-  int angle = (int)(180 * period(t));
-  // Serial.print("Writing angle:");
-  // Serial.println(angle);
-  if (t < 1) myservo.write(angle);
-  else activeFunction = 4;
-}
-
-void moveServoToActiveAngle() {
-  int mydecay = 1;
-  currentAngle = (int) expDecay(currentAngle, activeAngle+1, mydecay, delayVal * 0.001);
-  myservo.write(currentAngle);
-}
 
 void animate2(float t) {  // rainbow effect
   fill(BLACK);
@@ -229,6 +236,40 @@ void animate(float t) {  // green yellow back and forth
   }
 }
 
+
+
+
+
+/* --------------------------------------------------------------------------------
+                    SERVO MOTOR FUNCTIONS (TO MAKE IT TURN)
+-------------------------------------------------------------------------------- */
+
+void waveServo(int startframes, int count) {
+  count = count - startframes;
+  int secs = 3;
+  float t = mapf(count, 0, (secs * 60), 0, 1);
+  fill(WHITE);
+  int angle = (int)(180 * period(t));
+  // Serial.print("Writing angle:");
+  // Serial.println(angle);
+  if (t < 1) myservo.write(angle);
+  else activeFunction = 4;
+}
+
+void moveServoToActiveAngle() {
+  int mydecay = 1;
+  currentAngle = (int) expDecay(currentAngle, activeAngle+1, mydecay, delayVal * 0.001);
+  myservo.write(currentAngle);
+}
+
+
+
+
+
+/* --------------------------------------------------------------------------------
+                        ACTUAL MAIN METHODS (SETUP, LOOP)
+-------------------------------------------------------------------------------- */
+
 void setup() {
   Serial.begin(115200);
 
@@ -245,6 +286,7 @@ void setup() {
 
 void loop() {
 
+  // loop function normally gets called inconsistently often, this little if-setup here makes the code inside run at a maximum of 60 times per second (60Hz)
   if ((millis() - timePast) > delayVal) {
 
     // Handle incoming client requests
